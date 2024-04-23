@@ -10,14 +10,16 @@ import {
   Menu,
   Table,
   Button,
+  Icon,
 } from "semantic-ui-react";
 import ProductService from "../services/productService";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import { addToCart, removeFromCart } from "../store/actions/cartActions";
 
 export default function ProductList() {
+  const { cartItems } = useSelector((state) => state.cart);
   const [firstTime, setFirstTime] = useState(true);
   const dispatch = useDispatch();
 
@@ -59,10 +61,13 @@ export default function ProductList() {
   const handlePageChange = (newPageNo) => {
     setPageNo(newPageNo);
   };
+  const isProductInCart = (productId) =>
+    cartItems.some((item) => item.product.id === productId);
+
   return (
     <div>
       <ToastContainer position="bottom-right" />
-      <Table inverted color="blue" celled compact>
+      <Table celled inverted compact singleLine>
         <TableHeader>
           <TableRow>
             <TableHeaderCell>Product name</TableHeaderCell>
@@ -78,7 +83,7 @@ export default function ProductList() {
         <TableBody>
           {products.map((product) => (
             <TableRow key={product.id}>
-              <TableCell selectable collapsing>
+              <TableCell selectable>
                 <Link to={`/products/${product.productName}`}>
                   {product.productName}
                 </Link>
@@ -88,13 +93,23 @@ export default function ProductList() {
               <TableCell>{product.quantityPerUnit}</TableCell>
               <TableCell>{product.category?.categoryName}</TableCell>
               <TableCell>
-                <Button color="green" onClick={() => handleAddtoCart(product)}>
-                  Add to cart
+                <Button
+                  color="green"
+                  size="small"
+                  onClick={() => handleAddtoCart(product)}
+                  disabled={isProductInCart(product.id)}>
+                  {isProductInCart(product.id) ? (
+                    <Icon name="checkmark" />
+                  ) : (
+                    "Add to cart"
+                  )}
                 </Button>
               </TableCell>
               <TableCell>
                 <Button
+                  disabled={!isProductInCart(product.id)}
                   color="red"
+                  size="small"
                   onClick={() => handleRemoveFromCart(product)}>
                   Remove from cart
                 </Button>
@@ -107,7 +122,7 @@ export default function ProductList() {
           <TableRow>
             <TableHeaderCell colSpan={pageLimit}>
               <Menu floated="right" pagination>
-                {Array.from({ length: pageLimit }, (_, index) => (
+                {Array.from({ length: pageLimit }, (e, index) => (
                   <MenuItem
                     key={index + 1}
                     as="a"

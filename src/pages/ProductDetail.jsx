@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Card, Image, Button, Grid, Segment } from "semantic-ui-react";
+import { Image, Button, Segment, List, Icon } from "semantic-ui-react";
 import { useParams } from "react-router-dom";
 import ProductService from "../services/productService";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart, removeFromCart } from "../store/actions/cartActions";
 import { ToastContainer, toast } from "react-toastify";
+import prodImg from "../images/3073785.jpg";
 export default function ProductDetail() {
   let { name } = useParams();
-
+  const { cartItems } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
 
   const handleAddtoCart = (product) => {
@@ -18,7 +19,8 @@ export default function ProductDetail() {
     dispatch(removeFromCart(product));
     toast.success(`${product.productName} removed from cart!`);
   };
-
+  const isProductInCart = (productId) =>
+    cartItems.some((item) => item.product.id === productId);
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
@@ -32,38 +34,54 @@ export default function ProductDetail() {
   return (
     <div>
       <ToastContainer position="bottom-right" />
-      <Grid columns={1} celled inverted>
-        <Grid.Column>
-          <Segment size="small">
-            {product && (
-              <Card fluid>
-                <Image wrapped size="big" ui={false} />
-                <Card.Content>
-                  <Card.Header>{product.productName}</Card.Header>
-                  <Card.Meta>{product.category?.categoryName}</Card.Meta>
-                  <Card.Description>{product.quantityPerUnit}</Card.Description>
-                </Card.Content>
-                <Card.Content extra>
-                  <div className="ui two buttons">
-                    <Button
-                      onClick={() => handleAddtoCart(product)}
-                      basic
-                      color="green">
-                      Add to cart
-                    </Button>
-                    <Button
-                      onClick={() => handleRemoveFromCart(product)}
-                      basic
-                      color="red">
-                      Remove from cart
-                    </Button>
-                  </div>
-                </Card.Content>
-              </Card>
-            )}
-          </Segment>
-        </Grid.Column>
-      </Grid>
+      <Segment inverted>
+        {product && (
+          <List divided relaxed size="large" verticalAlign="middle">
+            <List.Item>
+              <Image
+                src={prodImg}
+                centered
+                ui={false}
+                style={{ maxWidth: "200px", height: "auto" }}
+              />
+            </List.Item>
+            <List.Item>
+              <List.Header style={{ color: "white" }}>
+                Product Name: {product.productName}
+              </List.Header>
+              <List.Description style={{ color: "white" }}>
+                Price: {Math.ceil(product.unitPrice)}
+              </List.Description>
+              <List.Description style={{ color: "white" }}>
+                Description: {product.quantityPerUnit}
+              </List.Description>
+            </List.Item>
+            <List.Item>
+              <div className="ui two buttons">
+                <Button
+                  color="green"
+                  size="small"
+                  onClick={() => handleAddtoCart(product)}
+                  disabled={isProductInCart(product.id)}>
+                  {isProductInCart(product.id) ? (
+                    <Icon name="checkmark" />
+                  ) : (
+                    "Add to cart"
+                  )}
+                </Button>
+                <Button
+                  disabled={!isProductInCart(product.id)}
+                  onClick={() => handleRemoveFromCart(product)}
+                  color="red"
+                  inverted
+                  fluid>
+                  Remove from cart
+                </Button>
+              </div>
+            </List.Item>
+          </List>
+        )}
+      </Segment>
     </div>
   );
 }

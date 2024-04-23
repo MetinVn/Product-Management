@@ -11,4 +11,7 @@
 .blockzero{
     display: block;
 }
-
+.navigation-links{
+    display: inline-block;
+    margin: 0 auto;
+}

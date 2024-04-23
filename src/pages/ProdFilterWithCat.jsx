@@ -8,6 +8,7 @@ import {
   TableBody,
   Table,
   Button,
+  Icon,
 } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, removeFromCart } from "../store/actions/cartActions";
@@ -15,6 +16,10 @@ import { ToastContainer, toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
 export default function ProdFilterWithCat() {
+  const { cartItems } = useSelector((state) => state.cart);
+  const isProductInCart = (productId) =>
+    cartItems.some((item) => item.product.id === productId);
+
   const dispatch = useDispatch();
   const handleAddtoCart = (product) => {
     dispatch(addToCart(product));
@@ -41,7 +46,7 @@ export default function ProdFilterWithCat() {
   return (
     <div>
       <ToastContainer position="bottom-right" />
-      <Table inverted color="blue" celled>
+      <Table celled inverted compact singleLine>
         <TableHeader>
           <TableRow>
             <TableHeaderCell>Product name</TableHeaderCell>
@@ -65,12 +70,21 @@ export default function ProdFilterWithCat() {
               <TableCell>{product.categoryName}</TableCell>
               <TableCell>{Math.floor(product.unitPrice)}</TableCell>
               <TableCell>
-                <Button color="green" onClick={() => handleAddtoCart(product)}>
-                  Add to cart
+                <Button
+                  color="green"
+                  size="small"
+                  onClick={() => handleAddtoCart(product)}
+                  disabled={isProductInCart(product.id)}>
+                  {isProductInCart(product.id) ? (
+                    <Icon name="checkmark" />
+                  ) : (
+                    "Add to cart"
+                  )}
                 </Button>
               </TableCell>
               <TableCell>
                 <Button
+                  disabled={!isProductInCart(product.id)}
                   color="red"
                   onClick={() => handleRemoveFromCart(product)}>
                   Remove from cart

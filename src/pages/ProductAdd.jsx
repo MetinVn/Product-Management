@@ -1,12 +1,14 @@
 import { Formik, Form } from "formik";
 import React, { useState } from "react";
 import * as Yup from "yup";
-import { Button } from "semantic-ui-react";
+import { Button, Label, Segment } from "semantic-ui-react";
 import { ToastContainer, toast } from "react-toastify";
-import UndefinedTextInput from "../utilities/customFormControls/UndefinedTextInput.jsx";
+import MetinVnTextInput from "../utilities/customFormControls/MetinVnTextInput.jsx";
 import ProductService from "../services/productService";
+import { useNavigate } from "react-router-dom";
 export default function ProductAdd() {
   const [loginLoading, setLoginLoading] = useState(false);
+  const navigate = useNavigate();
   const initialValues = {
     productName: "",
     unitPrice: "",
@@ -22,37 +24,49 @@ export default function ProductAdd() {
   });
 
   async function handleSubmit(values) {
+    console.log(values);
     setLoginLoading(true);
     const { addProduct } = new ProductService();
-    await addProduct(values)
-      .then(() => {
-        setTimeout(() => {
-          setLoginLoading(false);
-          toast.success("Product added!");
-        }, 2000);
-      })
-      .then((error) => console.log(error));
+    try {
+      await addProduct(values);
+      toast.success("Product added!");
+      setTimeout(() => {
+        setLoginLoading(false);
+        navigate("/");
+      }, 2000);
+    } catch (error) {
+      toast.error(error.response?.data?.error);
+      setLoginLoading(false);
+    }
   }
 
   return (
-    <Formik
-      validateOnMount
-      initialValues={initialValues}
-      validationSchema={schema}
-      onSubmit={(values, { resetForm }) => {
-        handleSubmit(values);
-        resetForm();
-      }}>
-      <Form className="ui form">
-        <ToastContainer position="bottom-right" />
-        <UndefinedTextInput name="productName" placeholder="Product name" />
-        <UndefinedTextInput name="unitPrice" placeholder="Price" />
-        <UndefinedTextInput name="unitsInStock" placeholder="Left in stock" />
-        <UndefinedTextInput name="quantityPerUnit" placeholder="Details" />
-        <Button fluid loading={loginLoading} type="submit" primary>
-          Add
-        </Button>
-      </Form>
-    </Formik>
+    <Segment loading={loginLoading}>
+      <Formik
+        validateOnMount
+        initialValues={initialValues}
+        validationSchema={schema}
+        onSubmit={(values, { resetForm }) => {
+          handleSubmit(values);
+          resetForm();
+        }}>
+        <Form className="ui form">
+          <ToastContainer position="bottom-right" />
+          <Label>Product Details</Label>
+          <MetinVnTextInput name="productName" placeholder="Product name" />
+          <MetinVnTextInput name="unitPrice" placeholder="Price" />
+          <MetinVnTextInput name="unitsInStock" placeholder="Left in stock" />
+          <MetinVnTextInput name="quantityPerUnit" placeholder="Details" />
+          <Button
+            style={{ margin: "0.5em" }}
+            fluid
+            loading={loginLoading}
+            type="submit"
+            primary>
+            Add
+          </Button>
+        </Form>
+      </Formik>
+    </Segment>
   );
 }

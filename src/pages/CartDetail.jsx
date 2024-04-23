@@ -6,6 +6,7 @@ import {
   ListHeader,
   Segment,
   Button,
+  Grid,
 } from "semantic-ui-react";
 import { addToCart, removeFromCart } from "../store/actions/cartActions";
 import { ToastContainer, toast } from "react-toastify";
@@ -25,36 +26,46 @@ export default function CartDetail() {
   return (
     <>
       <ToastContainer position="bottom-right" />
-      {cartLength ? (
-        cartItems.map((cartItem) => (
-          <Segment inverted key={cartItem.product.id}>
-            <List verticalAlign="middle" animated bulleted inverted relaxed>
-              <ListItem>
-                <ListContent>
-                  <ListHeader>
-                    {cartItem.quantity + " " + cartItem.product.productName}
-                  </ListHeader>
-                  <ListHeader>{cartItem.product.quantityPerUnit}</ListHeader>
-                </ListContent>
-              </ListItem>
+      <List columns={2} container="true" divided stackable="true">
+        {cartLength ? (
+          cartItems.map((cartItem, index) => (
+            <List key={index} textalign="center">
+              <Segment inverted>
+                <List animated inverted relaxed>
+                  <ListItem>
+                    <ListContent>
+                      <ListHeader>
+                        {cartItem.quantity + " " + cartItem.product.productName}
+                      </ListHeader>
+                      <ListHeader>
+                        {cartItem.product.quantityPerUnit}
+                      </ListHeader>
+                    </ListContent>
+                  </ListItem>
+                </List>
+                <ListItem>
+                  <Button
+                    color="green"
+                    onClick={() => handleAddtoCart(cartItem.product)}>
+                    Increase
+                  </Button>
+                  <Button
+                    color="red"
+                    onClick={() => handleRemoveFromCart(cartItem.product)}>
+                    Remove from cart
+                  </Button>
+                </ListItem>
+              </Segment>
             </List>
-            <ListItem>
-              <Button
-                color="green"
-                onClick={() => handleAddtoCart(cartItem.product)}>
-                Increase
-              </Button>
-              <Button
-                color="red"
-                onClick={() => handleRemoveFromCart(cartItem.product)}>
-                Remove from cart
-              </Button>
-            </ListItem>
-          </Segment>
-        ))
-      ) : (
-        <p>Cart is empty</p>
-      )}
+          ))
+        ) : (
+          <Grid.Row>
+            <Grid.Column textAlign="center">
+              <Segment>Cart is empty</Segment>
+            </Grid.Column>
+          </Grid.Row>
+        )}
+      </List>
     </>
   );
 }

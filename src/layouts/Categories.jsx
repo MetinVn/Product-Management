@@ -23,10 +23,9 @@ export default function Categories() {
   }
 
   const showCategories =
-    (location.pathname === "/" ||
-      location.pathname === "/products/productsWithCategoryNames") &&
-    !location.pathname.startsWith("/login") &&
-    !location.pathname.startsWith("/register");
+    location.pathname === "/" ||
+    location.pathname === "/products" ||
+    location.pathname === "/products/productsWithCategoryNames";
 
   return (
     <div>

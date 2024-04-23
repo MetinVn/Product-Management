@@ -1,0 +1,10 @@
+.nav-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .centered-items {
+    display: flex;
+    align-items: center;
+  }

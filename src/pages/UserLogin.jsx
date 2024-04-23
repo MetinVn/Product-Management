@@ -1,9 +1,9 @@
 import { Formik, Form } from "formik";
 import React, { useState } from "react";
-import { Button, Message } from "semantic-ui-react";
+import { Button, Message, Segment } from "semantic-ui-react";
 import { ToastContainer, toast } from "react-toastify";
 import * as Yup from "yup";
-import UndefinedTextInput from "../utilities/customFormControls/UndefinedTextInput.jsx";
+import MetinVnTextInput from "../utilities/customFormControls/MetinVnTextInput.jsx";
 import UserService from "../services/userService.js";
 import { useDispatch } from "react-redux";
 import { authUser } from "../store/actions/authActions.js";
@@ -41,35 +41,37 @@ export default function Login() {
   });
 
   return (
-    <Formik
-      validationSchema={schema}
-      initialValues={initialValues}
-      onSubmit={(values, { resetForm }) => {
-        handleSubmit(values);
-        resetForm();
-        localStorage.setItem("userForm", JSON.stringify(values));
-      }}>
-      <Form className="ui form">
-        <ToastContainer position="bottom-right" />
-        <UndefinedTextInput label="Email" name="email" placeholder="email" />
-        <UndefinedTextInput
-          label="Password"
-          name="password"
-          placeholder="password"
-        />
-        <Button fluid loading={loginLoading} primary type="submit">
-          Login
-        </Button>
-        {message ? (
-          <div className="block">
-            <Message compact size="small" color="red">
-              {message}
-            </Message>
-          </div>
-        ) : (
-          ""
-        )}
-      </Form>
-    </Formik>
+    <Segment color="green" loading={loginLoading}>
+      <Formik
+        validationSchema={schema}
+        initialValues={initialValues}
+        onSubmit={(values, { resetForm }) => {
+          handleSubmit(values);
+          resetForm();
+          localStorage.setItem("userForm", JSON.stringify(values));
+        }}>
+        <Form autoComplete="on" className="ui form">
+          <ToastContainer position="bottom-right" />
+          <MetinVnTextInput label="Email" name="email" placeholder="email" />
+          <MetinVnTextInput
+            label="Password"
+            name="password"
+            placeholder="password"
+          />
+          <Button fluid primary type="submit">
+            Login
+          </Button>
+          {message ? (
+            <div className="block">
+              <Message compact size="small" color="red">
+                {message}
+              </Message>
+            </div>
+          ) : (
+            ""
+          )}
+        </Form>
+      </Formik>
+    </Segment>
   );
 }

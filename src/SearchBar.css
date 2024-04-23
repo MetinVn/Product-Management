@@ -1,0 +1,18 @@
+.custom-search-bar {
+    position: relative;
+    display: inline-block;
+
+  }
+  .search-input {
+    width: 160px;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    transition: width 0.3s ease;
+  }
+  .search-input:hover,
+  .search-input:focus {
+    width: 260px;
+    outline: none;
+  }
+  

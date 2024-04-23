@@ -1,10 +1,10 @@
 import { Formik, Form } from "formik";
 import React, { useState } from "react";
-import { Button } from "semantic-ui-react";
+import { Button, Segment } from "semantic-ui-react";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import UndefinedTextInput from "../utilities/customFormControls/UndefinedTextInput.jsx";
+import MetinVnTextInput from "../utilities/customFormControls/MetinVnTextInput.jsx";
 import UserService from "../services/userService.js";
 import { useDispatch } from "react-redux";
 import { authUser } from "../store/actions/authActions.js";
@@ -49,27 +49,29 @@ export default function Login() {
   }
 
   return (
-    <Formik
-      validateOnMount
-      validationSchema={schema}
-      initialValues={initialValues}
-      onSubmit={(values, { resetForm }) => {
-        handleSubmit(values);
-        resetForm();
-        localStorage.setItem("userReg", JSON.stringify(values));
-      }}>
-      <Form className="ui form">
-        <ToastContainer position="bottom-right" />
-        <UndefinedTextInput label="Email" name="email" placeholder="email" />
-        <UndefinedTextInput
-          label="Password"
-          name="password"
-          placeholder="password"
-        />
-        <Button fluid loading={registerLoading} primary type="submit">
-          Register
-        </Button>
-      </Form>
-    </Formik>
+    <Segment color="blue" loading={registerLoading}>
+      <Formik
+        validateOnMount
+        validationSchema={schema}
+        initialValues={initialValues}
+        onSubmit={(values, { resetForm }) => {
+          handleSubmit(values);
+          resetForm();
+          localStorage.setItem("userReg", JSON.stringify(values));
+        }}>
+        <Form autoComplete="on" className="ui form">
+          <ToastContainer position="bottom-right" />
+          <MetinVnTextInput label="Email" name="email" placeholder="email" />
+          <MetinVnTextInput
+            label="Password"
+            name="password"
+            placeholder="password"
+          />
+          <Button fluid primary type="submit">
+            Register
+          </Button>
+        </Form>
+      </Formik>
+    </Segment>
   );
 }
